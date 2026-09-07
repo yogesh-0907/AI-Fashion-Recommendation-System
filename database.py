@@ -1,3 +1,4 @@
+import os
 import sqlite3
 from datetime import datetime
 import hashlib
@@ -540,6 +541,25 @@ def login_user(email, password):
     )).fetchone()
 
     connection.close()
+
+    if user is None:
+        return None
+
+    admin_email = os.getenv(
+        "ADMIN_EMAIL",
+        ""
+    ).strip().lower()
+
+    if (
+        admin_email
+        and user[2].strip().lower() == admin_email
+    ):
+        user = (
+            user[0],
+            user[1],
+            user[2],
+            "admin"
+        )
 
     return user
 
