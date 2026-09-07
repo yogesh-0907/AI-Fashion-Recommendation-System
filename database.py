@@ -530,8 +530,7 @@ def login_user(email, password):
         SELECT
             customer_id,
             name,
-            email,
-            role
+            email
         FROM users
         WHERE email = ?
         AND password = ?
@@ -550,18 +549,20 @@ def login_user(email, password):
         ""
     ).strip().lower()
 
+    role = "customer"
+
     if (
         admin_email
         and user[2].strip().lower() == admin_email
     ):
-        user = (
-            user[0],
-            user[1],
-            user[2],
-            "admin"
-        )
+        role = "admin"
 
-    return user
+    return (
+        user[0],
+        user[1],
+        user[2],
+        role
+    )
 
 def make_user_admin(email):
 
@@ -602,3 +603,15 @@ def reset_user_password(email, new_password):
     connection.commit()
 
     connection.close()
+def get_registered_user_count():
+
+    connection = get_connection()
+
+    count = connection.execute("""
+        SELECT COUNT(*)
+        FROM users
+    """).fetchone()[0]
+
+    connection.close()
+
+    return count
