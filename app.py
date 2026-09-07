@@ -51,7 +51,8 @@ from ai_context import build_customer_context
 from customer_profile import get_customer_profile
 from database import (
     get_connection,
-    reset_user_password
+    reset_user_password,
+    get_registered_user_count
 )
 from segmentation import perform_segmentation
 from preferences import get_customer_preferences
@@ -1367,9 +1368,17 @@ if (
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
+
+        registered_users = get_registered_user_count()
+
+        total_customers = (
+            len(customers)
+            + registered_users
+        )
+
         st.metric(
             "Customers",
-            f"{len(customers):,}"
+            f"{total_customers:,}"
         )
 
     with col2:
